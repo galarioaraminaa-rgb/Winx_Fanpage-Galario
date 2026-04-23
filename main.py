@@ -8,9 +8,9 @@ app = FastAPI(title="Winx Fanbase API")
 templates = Jinja2Templates(directory="templates")
 
 # 🏠 UI Route
-@app.get("/", response_class=HTMLResponse)
-def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+@app.get("/")
+def home():
+    return FileResponse("static/index.html")
 
 
 # API ROUTES (same as before)
