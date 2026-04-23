@@ -1,14 +1,20 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 from database import get_connection
 
 app = FastAPI(title="Winx Fanbase API")
 
-# Root check
-@app.get("/")
-def root():
-    return {"message": "Winx Fanbase API is running 🧚"}
+templates = Jinja2Templates(directory="templates")
 
-# 1️⃣ Get All Characters
+# 🏠 UI Route
+@app.get("/", response_class=HTMLResponse)
+def home(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+# API ROUTES (same as before)
+
 @app.get("/characters")
 def get_characters():
     conn = get_connection()
@@ -21,7 +27,6 @@ def get_characters():
     return [dict(row) for row in rows]
 
 
-# 2️⃣ Get Specific Character
 @app.get("/characters/{character_id}")
 def get_character(character_id: int):
     conn = get_connection()
@@ -38,7 +43,6 @@ def get_character(character_id: int):
     return dict(row)
 
 
-# 3️⃣ Get Actors
 @app.get("/actors")
 def get_actors():
     conn = get_connection()
