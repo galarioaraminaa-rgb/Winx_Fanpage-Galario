@@ -1,6 +1,5 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from database import get_connection
 
 app = FastAPI(title="Winx Fanbase API")
