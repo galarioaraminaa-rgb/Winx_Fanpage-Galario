@@ -10,36 +10,29 @@ def home():
     return FileResponse("static/index.html")
 
 
-# 📌 Get all characters
 @app.get("/characters/{param}")
 def get_character(param: str):
     conn = get_connection()
     cursor = conn.cursor()
 
-    # If numeric → treat as ID
+    # ensure table exists (important on Render)
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS characters (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        fairy_type TEXT,
+        home_world TEXT,
+        description TEXT
+    )
+    """)
+
+    # numeric → ID search
     if param.isdigit():
-        cursor.execute("SELECT * FROM characters WHERE id = ?", (param,))
+        cursor.execute("SELECT * FROM characters WHERE id = ?", (int(param),))
     else:
         cursor.execute("SELECT * FROM characters WHERE name = ?", (param,))
 
     row = cursor.fetchone()
-    conn.close()
-
-    if not row:
-        raise HTTPException(status_code=404, detail="Character not found")
-
-    return dict(row)
-
-
-# 📌 Get specific character
-@app.get("/characters/{character_id}")
-def get_character(character_id: int):
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute("SELECT * FROM characters WHERE id = ?", (character_id,))
-    row = cursor.fetchone()
-
     conn.close()
 
     if not row:
