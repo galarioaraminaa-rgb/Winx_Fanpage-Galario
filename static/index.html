@@ -1,91 +1,139 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Winx Fanbase</title>
-    <style>
-        body {
-            font-family: Arial;
-            background: #f3e5f5;
-            padding: 20px;
-        }
-        h1 {
-            color: purple;
-        }
-        .card {
-            background: white;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .card:hover {
-            background: #f8bbd0;
-        }
-    </style>
+  <title>Winx Fairy API Explorer</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: "Trebuchet MS", sans-serif;
+      background: linear-gradient(135deg, #ffb6f9, #b5e0ff, #d5b3ff);
+      min-height: 100vh;
+      color: #2b2b2b;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 30px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 40px;
+      color: #6a00ff;
+      text-shadow: 0 0 10px #fff, 0 0 20px #c77dff;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(255, 105, 180, 0.4);
+      margin-top: 20px;
+    }
+
+    input {
+      width: 70%;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(45deg, #ff4fd8, #7a5cff);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      margin-left: 10px;
+      box-shadow: 0 0 10px #ff4fd8;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    pre {
+      background: #120022;
+      color: #00ffcc;
+      padding: 15px;
+      border-radius: 12px;
+      overflow-x: auto;
+      box-shadow: 0 0 15px #7a5cff;
+    }
+
+    .hint {
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .sparkle {
+      position: fixed;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      animation: float 6s infinite;
+      opacity: 0.6;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh); opacity: 0; }
+    }
+  </style>
 </head>
+
 <body>
 
-<h1>🧚 Winx Characters</h1>
+<div class="container">
 
-<button onclick="loadCharacters()">Load Characters</button>
+  <h1>🧚 Winx Fairy API Explorer</h1>
 
-<div id="characters"></div>
+  <p class="hint">
+    Type a magical endpoint like <b>/characters/1</b> or <b>/characters/Bloom</b>
+  </p>
 
-<h2>Character Details</h2>
-<div id="details"></div>
+  <div class="card">
+    <input id="endpoint" placeholder="/characters/1" />
+    <button onclick="sendRequest()">✨ Cast Request</button>
 
-<h2>Actors</h2>
-<button onclick="loadActors()">Load Actors</button>
-<div id="actors"></div>
+    <pre id="output">✨ Your magic response will appear here...</pre>
+  </div>
+
+</div>
 
 <script>
-async function loadCharacters() {
-    const res = await fetch('/characters');
-    const data = await res.json();
+async function sendRequest() {
+    const endpoint = document.getElementById("endpoint").value;
 
-    const container = document.getElementById('characters');
-    container.innerHTML = "";
-
-    data.forEach(char => {
-        const div = document.createElement('div');
-        div.className = "card";
-        div.innerText = char.name + " (" + char.fairy_type + ")";
-        div.onclick = () => getCharacter(char.id);
-        container.appendChild(div);
-    });
+    try {
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        document.getElementById("output").textContent =
+            JSON.stringify(data, null, 2);
+    } catch (err) {
+        document.getElementById("output").textContent =
+            "Magic failed: " + err;
+    }
 }
 
-async function getCharacter(id) {
-    const res = await fetch('/characters/' + id);
-    const char = await res.json();
-
-    const details = document.getElementById('details');
-    details.innerHTML = `
-        <div class="card">
-            <h3>${char.name}</h3>
-            <p><b>Type:</b> ${char.fairy_type}</p>
-            <p><b>World:</b> ${char.home_world}</p>
-            <p>${char.description}</p>
-        </div>
-    `;
-}
-
-async function loadActors() {
-    const res = await fetch('/actors');
-    const data = await res.json();
-
-    const container = document.getElementById('actors');
-    container.innerHTML = "";
-
-    data.forEach(actor => {
-        const div = document.createElement('div');
-        div.className = "card";
-        div.innerHTML = `
-            <b>${actor.name}</b> (${actor.nationality})<br>
-            Character: ${actor.character}
-        `;
-        container.appendChild(div);
-    });
+// ✨ floating sparkles
+for (let i = 0; i < 20; i++) {
+    let s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.animationDuration = (3 + Math.random() * 5) + "s";
+    document.body.appendChild(s);
 }
 </script>
 
