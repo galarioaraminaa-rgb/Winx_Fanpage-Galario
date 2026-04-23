@@ -1,16 +1,20 @@
-# Valorant Fanbase API
+# Winx Club Fanbase API
 
-A FastAPI wrapper around [valorant-api.com](https://valorant-api.com) — structured like a fanbase wiki, similar to PokéAPI.
+A FastAPI + SQLite powered fanbase API for the magical universe of **Winx Club**.
 
 ## Endpoints
 
 | Method | Path | Description |
 |--------|------|-------------|
-| GET | `/` | HTML frontend (agent browser + API explorer) |
-| GET | `/characters` | List all playable Valorant agents |
-| GET | `/characters/{name}` | Get a single agent by name (case-insensitive) |
-| GET | `/actors` | Simplified cast list (name, role, icon) |
+| GET | `/` | HTML frontend (fairy browser + API explorer) |
+| GET | `/characters` | List all Winx Club fairies |
+| GET | `/characters/{name}` | Get a single fairy by name (case-insensitive) |
+| GET | `/actors` | Voice cast list (EN + IT voice actors) |
 | GET | `/docs` | Auto-generated Swagger UI |
+
+### Query Parameters for `/characters`
+- `?home_world=Domino` — filter by home world
+- `?season_debut=1` — filter by season they debuted in
 
 ## Local Development
 
@@ -21,7 +25,20 @@ uvicorn main:app --reload
 
 Visit: http://localhost:8000
 
-## Deploy to Render (Free Tier)
+## Project Structure
+
+```
+winx-api/
+├── main.py          # FastAPI app + SQLite DB init + all endpoints
+├── requirements.txt
+├── render.yaml
+└── static/
+    └── index.html   # Frontend UI
+```
+
+> **Important:** `index.html` must live inside the `static/` folder.
+
+## Deploy to Render
 
 1. Push this folder to a GitHub repository
 2. Go to [render.com](https://render.com) → **New** → **Web Service**
@@ -32,41 +49,30 @@ Visit: http://localhost:8000
    - **Environment:** Python 3
 5. Click **Deploy**
 
-The `render.yaml` file is already included — Render will auto-detect it.
+The `render.yaml` is already included — Render will auto-detect it.
 
-## Example Responses
+## Example Response
 
-### `GET /characters`
+### `GET /characters/bloom`
 ```json
 {
-  "count": 25,
-  "characters": [
-    {
-      "uuid": "...",
-      "name": "Jett",
-      "role": "Duelist",
-      "description": "Representing her home country of South Korea...",
-      "portrait": "https://media.valorant-api.com/agents/.../fullportrait.png",
-      "icon": "...",
-      "background": "...",
-      "role_icon": "..."
-    }
-  ]
-}
-```
-
-### `GET /characters/jett`
-Returns full agent detail including `abilities[]` array with slot, name, description, and icon.
-
-### `GET /actors`
-```json
-{
-  "count": 25,
-  "actors": [
-    { "name": "Brimstone", "role": "Controller", "icon": "..." }
+  "id": 1,
+  "name": "Bloom",
+  "fairy_type": "Fairy of the Dragon Flame",
+  "home_world": "Domino",
+  "school": "Alfea",
+  "transformation": "Sirenix",
+  "power": "Dragon Flame — the most ancient and powerful magic in existence",
+  "description": "...",
+  "hair_color": "Auburn / Red",
+  "eye_color": "Blue",
+  "season_debut": 1,
+  "abilities": [
+    { "name": "Dragon Flame Burst", "description": "..." },
+    ...
   ]
 }
 ```
 
 ---
-Data © Riot Games. This is an unofficial fan project.
+Winx Club © Rainbow S.r.l. — Unofficial fan project.
