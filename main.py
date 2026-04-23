@@ -4,6 +4,40 @@ from database import get_connection
 
 app = FastAPI(title="Winx Fanbase API")
 
+def seed_if_empty():
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS characters (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT,
+        fairy_type TEXT,
+        home_world TEXT,
+        description TEXT
+    )
+    """)
+
+    cursor.execute("SELECT COUNT(*) FROM characters")
+    count = cursor.fetchone()[0]
+
+    if count == 0:
+        cursor.executemany("""
+        INSERT INTO characters (name, fairy_type, home_world, description)
+        VALUES (?, ?, ?, ?)
+        """, [
+            ("Bloom", "Dragon Flame", "Earth", "Leader of Winx Club"),
+            ("Stella", "Sun & Moon", "Solaria", "Princess of light"),
+            ("Flora", "Nature", "Lynphea", "Nature fairy"),
+        ])
+
+        conn.commit()
+
+    conn.close()
+
+seed_if_empty()
+
+
 # 🏠 UI Route
 @app.get("/")
 def home():
