@@ -1,11 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
-from fastapi.responses import HTMLResponse
 from database import get_connection
 
 app = FastAPI(title="Winx Fanbase API")
-
-templates = Jinja2Templates(directory="templates")
 
 # 🏠 UI Route
 @app.get("/")
@@ -13,8 +10,7 @@ def home():
     return FileResponse("static/index.html")
 
 
-# API ROUTES (same as before)
-
+# 📌 Get all characters
 @app.get("/characters")
 def get_characters():
     conn = get_connection()
@@ -27,6 +23,7 @@ def get_characters():
     return [dict(row) for row in rows]
 
 
+# 📌 Get specific character
 @app.get("/characters/{character_id}")
 def get_character(character_id: int):
     conn = get_connection()
@@ -43,6 +40,7 @@ def get_character(character_id: int):
     return dict(row)
 
 
+# 📌 Get actors
 @app.get("/actors")
 def get_actors():
     conn = get_connection()
