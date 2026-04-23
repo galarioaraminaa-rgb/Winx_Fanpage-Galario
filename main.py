@@ -11,16 +11,24 @@ def home():
 
 
 # 📌 Get all characters
-@app.get("/characters")
-def get_characters():
+@app.get("/characters/{param}")
+def get_character(param: str):
     conn = get_connection()
     cursor = conn.cursor()
 
-    cursor.execute("SELECT * FROM characters")
-    rows = cursor.fetchall()
+    # If numeric → treat as ID
+    if param.isdigit():
+        cursor.execute("SELECT * FROM characters WHERE id = ?", (param,))
+    else:
+        cursor.execute("SELECT * FROM characters WHERE name = ?", (param,))
 
+    row = cursor.fetchone()
     conn.close()
-    return [dict(row) for row in rows]
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Character not found")
+
+    return dict(row)
 
 
 # 📌 Get specific character
